@@ -102,6 +102,7 @@ func trimTitleTags(title string) string {
 
 //获取title
 func GetTitle(r *xhttp.Response) (title string) {
+	println(r.GetStatus())
 	body := string(r.GetBody())
 	var re = regexp.MustCompile(`(?im)<\s*title.*>(.*?)<\s*/\s*title>`)
 	for _, match := range re.FindAllString(body, -1) {

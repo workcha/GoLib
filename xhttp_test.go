@@ -5,7 +5,8 @@ import (
 )
 
 func TestGET(t *testing.T) {
-	resp := GET("https://www.baidu.com", nil)
+	resp := GET("https:://oa.dgut.edu.cn/", nil)
+	println(resp.GetStatus())
 	println(string(resp.GetBody()))
 }
 

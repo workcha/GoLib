@@ -22,7 +22,8 @@ import (
 //}
 
 func TestGetAllLinks(t *testing.T) {
-	resp := GET("https://www.dgut.edu.cn", nil)
+	resp := GET("https://oa.dgut.edu.cn/", nil)
+	println(GetTitle(resp))
 	links := GetAllLinks(string(resp.GetBody()))
 	for _, link := range links.Links {
 		println(link)
