@@ -102,25 +102,28 @@ func trimTitleTags(title string) string {
 
 //获取title
 func GetTitle(r *xhttp.Response) (title string) {
-	println(r.GetStatus())
-	body := string(r.GetBody())
-	var re = regexp.MustCompile(`(?im)<\s*title.*>(.*?)<\s*/\s*title>`)
-	for _, match := range re.FindAllString(body, -1) {
-		title = html.UnescapeString(trimTitleTags(match))
-		break
-	}
-	// Non UTF-8
-	if contentTypes, ok := r.GetHeaders()["Content-Type"]; ok {
-		contentType := strings.ToLower(strings.Join(contentTypes, ";"))
-		// special cases
-		if strings.Contains(contentType, "charset=gb2312") || strings.Contains(contentType, "charset=gbk") {
-			titleUtf8, err := Decodegbk([]byte(title))
-			if err != nil {
-				return
-			}
-
-			return string(titleUtf8)
+	if r.GetStatus() == 200 {
+		body := string(r.GetBody())
+		var re = regexp.MustCompile(`(?im)<\s*title.*>(.*?)<\s*/\s*title>`)
+		for _, match := range re.FindAllString(body, -1) {
+			title = html.UnescapeString(trimTitleTags(match))
+			break
 		}
+		// Non UTF-8
+		if contentTypes, ok := r.GetHeaders()["Content-Type"]; ok {
+			contentType := strings.ToLower(strings.Join(contentTypes, ";"))
+			// special cases
+			if strings.Contains(contentType, "charset=gb2312") || strings.Contains(contentType, "charset=gbk") {
+				titleUtf8, err := Decodegbk([]byte(title))
+				if err != nil {
+					return
+				}
+
+				return string(titleUtf8)
+			}
+		}
+		return
 	}
-	return
+	return ""
+
 }
