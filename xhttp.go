@@ -41,7 +41,7 @@ func getClient(headers map[string]string) *xhttp.Client {
 	options.Headers = HEADER
 	options.DialTimeout = 6
 	options.MaxRespBodySize = 2 << 60
-	options.Proxy = "http://127.0.0.1:8080"
+	//options.Proxy = "http://127.0.0.1:8080"
 	// 如果要继承cookie，传入cookie jar；否则填nil。
 	cookieJar, _ := cookiejar.New(&cookiejar.Options{PublicSuffixList: publicsuffix.List})
 
