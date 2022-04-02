@@ -114,8 +114,6 @@ func TestGetClient(t *testing.T) {
 
 	*/
 	//文件上传
-	resp := http.FileUpload("file", "1.png", "http://127.0.0.1/8899.php", "image/png", []byte("I'am content"), map[string]string{"param": "1"})
-	println(resp.RequestPackage)
+	http.FileUpload("file", "1.png", "http://127.0.0.1/8899.php", "image/png", []byte("I'am content"), map[string]string{"param": "1"})
 
-	println(resp.ResponsePackage)
 }
