@@ -5,7 +5,8 @@
 ```
 兼容各种发包（JSON、文件上传、XML）,自带title、状态、请求包、返回包获取，适合用于扫描器开发的组件
 ```
-##函数
+## 函数
+```
     初始化
     http := Http{Proxy: "http://127.0.0.1:8080", Header: header, TimeOut: 3}
     普通GET请求
@@ -35,3 +36,4 @@
         RequestPackage  string
         ResponsePackage	string
     }
+```
