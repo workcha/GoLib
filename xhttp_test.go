@@ -28,7 +28,13 @@ func TestGetClient(t *testing.T) {
 
 	*/
 	http.GET("http://127.0.0.1/8899.php")
-
+	/*
+		Content-Length: 100
+		Date: Sat, 02 Apr 2022 02:15:30 GMT
+		Server: Apache/2.4.39 (Win32) OpenSSL/1.0.2r mod_fcgid/2.3.9a mod_log_rotate/1.02
+		X-Powered-By: PHP/7.3.4
+		Content-Type: text/html; charset=UTF-8
+	*/
 	/*
 		POST /8899.php HTTP/1.1
 		Host: 127.0.0.1
@@ -43,8 +49,8 @@ func TestGetClient(t *testing.T) {
 
 		A=1&N2=12
 	*/
-	http.POST("http://127.0.0.1/8899.php", "A=1&N2=12")
-
+	resp2 := http.POST("http://127.0.0.1/8899.php", "A=1&N2=12")
+	println(resp2.ResponsePackage)
 	/*
 		POST /8899.php HTTP/1.1
 		Host: 127.0.0.1
@@ -108,5 +114,8 @@ func TestGetClient(t *testing.T) {
 
 	*/
 	//文件上传
-	http.FileUpload("file", "1.png", "http://127.0.0.1/8899.php", "image/png", []byte("I'am content"), map[string]string{"param": "1"})
+	resp := http.FileUpload("file", "1.png", "http://127.0.0.1/8899.php", "image/png", []byte("I'am content"), map[string]string{"param": "1"})
+	println(resp.RequestPackage)
+
+	println(resp.ResponsePackage)
 }

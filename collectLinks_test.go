@@ -22,18 +22,18 @@ import (
 //}
 
 func TestGetAllLinks(t *testing.T) {
-	resp := GET("https://oa.dgut.edu.cn/", nil)
-	println(GetTitle(resp))
-	links := GetAllLinks(string(resp.GetBody()))
-	for _, link := range links.Links {
-		println(link)
-	}
-	println("js")
-	for _, js := range links.Js {
-		println(js)
-	}
-	println("css")
-	for _, css := range links.Css {
-		println(css)
-	}
+	//resp := GET("https://oa.dgut.edu.cn/", nil)
+	//println(GetTitle(resp))
+	//links := GetAllLinks(string(resp.GetBody()))
+	//for _, link := range links.Links {
+	//	println(link)
+	//}
+	//println("js")
+	//for _, js := range links.Js {
+	//	println(js)
+	//}
+	//println("css")
+	//for _, css := range links.Css {
+	//	println(css)
+	//}
 }
