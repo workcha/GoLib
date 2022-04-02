@@ -2,6 +2,7 @@ package GoLib
 
 import (
 	"bytes"
+	"crypto/tls"
 	"fmt"
 	"golang.org/x/net/publicsuffix"
 	"golang.org/x/text/encoding/traditionalchinese"
@@ -146,9 +147,9 @@ func (h *Http) init() {
 	cookieJar, _ := cookiejar.New(&cookiejar.Options{PublicSuffixList: publicsuffix.List})
 	if h.Proxy != "" {
 		proxy, _ := url.Parse(h.Proxy)
-		h.Client = &http.Client{Jar: cookieJar, Timeout: time.Duration(h.TimeOut) * time.Second, Transport: &http.Transport{Proxy: http.ProxyURL(proxy)}}
+		h.Client = &http.Client{Jar: cookieJar, Timeout: time.Duration(h.TimeOut) * time.Second, Transport: &http.Transport{Proxy: http.ProxyURL(proxy), TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}}
 	} else {
-		h.Client = &http.Client{Jar: cookieJar, Timeout: time.Duration(h.TimeOut) * time.Second}
+		h.Client = &http.Client{Jar: cookieJar, Timeout: time.Duration(h.TimeOut) * time.Second, Transport: &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}}
 	}
 }
 
@@ -208,6 +209,7 @@ func getTitle(response *http.Response) (title string) {
 
 //strng形式获取headers
 func getHeaders(response *http.Response) (header string) {
+
 	for k, v := range response.Header {
 		header = header + k + ": " + strings.Join(v, ";") + "\r\n"
 	}
@@ -218,6 +220,7 @@ func getHeaders(response *http.Response) (header string) {
 func getRequestPackage(response *http.Response, body string) (result string) {
 	request := response.Request
 	result += request.Method + " " + request.URL.Path + " " + request.Proto + "\r\n"
+	result += "Host: " + response.Request.Host + "\r\n"
 	for k, v := range request.Header {
 		result += k + ": " + strings.Join(v, ";") + "\r\n"
 	}

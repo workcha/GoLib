@@ -27,6 +27,10 @@ func TestGetClient(t *testing.T) {
 		Connection: close
 
 	*/
+	resp := http.GET("https://121.5.130.38:5003/")
+	println(resp.RequestPackage)
+	println(resp.ResponsePackage)
+
 	http.GET("http://127.0.0.1/8899.php")
 	/*
 		Content-Length: 100
@@ -114,6 +118,6 @@ func TestGetClient(t *testing.T) {
 
 	*/
 	//文件上传
-	http.FileUpload("file", "1.png", "http://127.0.0.1/8899.php", "image/png", []byte("I'am content"), map[string]string{"param": "1"})
+	//http.FileUpload("file", "1.png", "http://127.0.0.1/8899.php", "image/png", []byte("I'am content"), map[string]string{"param": "1"})
 
 }
