@@ -20,3 +20,17 @@ func RemoveDuplicateElement(languages []string) []string {
 	}
 	return result
 }
+
+//判断字符串数组中是否存在字符串,flag为是否大小写敏感,1就是敏感，0就是不敏感
+func StrInList(str string, strList []string, flag bool) bool {
+	for _, v := range strList {
+		if flag {
+			str = strings.ToLower(str)
+			v = strings.ToLower(v)
+		}
+		if str == v {
+			return true
+		}
+	}
+	return false
+}

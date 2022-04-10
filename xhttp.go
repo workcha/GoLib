@@ -69,6 +69,24 @@ func (h *Http) HEAD(url string) *HttpResponse {
 	return h.httpRequest("HEAD", url, "", "")
 }
 
+//判断url是否为文件
+func (h *Http) ISFile(url string) bool {
+	response := h.HEAD(url)
+	headerKeys := h.getHeaderKeys(response.ResponseHeader)
+	if StrInList("ETag", headerKeys, true) && StrInList("Last-Modified", headerKeys, true) {
+		return true
+	}
+	return false
+}
+
+//获取header的keys
+func (h *Http) getHeaderKeys(headers map[string][]string) (result []string) {
+	for k := range headers {
+		result = append(result, k)
+	}
+	return
+}
+
 //正常请求
 func (h *Http) httpRequest(method, url, body, tp string) *HttpResponse {
 	if h.Client == nil {

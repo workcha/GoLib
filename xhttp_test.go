@@ -50,6 +50,7 @@ func TestGetClient(t *testing.T) {
 		A=1&N2=12
 	*/
 	resp2 := http.POST("http://127.0.0.1/8899.php", "A=1&N2=12")
+	http.getHeaderKeys(resp2.ResponseHeader)
 	println(resp2.ResponsePackage)
 	println(resp2.RequestPackage)
 	/*
@@ -117,4 +118,9 @@ func TestGetClient(t *testing.T) {
 	//文件上传
 	http.FileUpload("file", "1.png", "http://127.0.0.1/8899.php", "image/png", []byte("I'am content"), map[string]string{"param": "1"})
 
+	//判断是否为静态文件
+	isFile := http.ISFile("http://127.0.0.1/1.txt")
+	if isFile {
+		print("isFile")
+	}
 }
