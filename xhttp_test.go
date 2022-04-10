@@ -27,7 +27,6 @@ func TestGetClient(t *testing.T) {
 		Connection: close
 
 	*/
-
 	http.GET("http://127.0.0.1/8899.php")
 	/*
 		Content-Length: 100
@@ -52,6 +51,7 @@ func TestGetClient(t *testing.T) {
 	*/
 	resp2 := http.POST("http://127.0.0.1/8899.php", "A=1&N2=12")
 	println(resp2.ResponsePackage)
+	println(resp2.RequestPackage)
 	/*
 		POST /8899.php HTTP/1.1
 		Host: 127.0.0.1
