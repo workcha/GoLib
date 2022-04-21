@@ -22,6 +22,22 @@ func GetDomain(url string) string {
 	return strings.Split(url, "/")[2]
 }
 
+//处理url
+func DealUrl(url string) string {
+	var result []string
+	u := strings.Split(url, "/")
+	result = append(result, u[0:3]...)
+	result[0] = u[0]
+	result[1] = u[1]
+	result[2] = u[2]
+	for i := 3; i < len(u); i++ {
+		if strings.TrimSpace(u[i]) != "" {
+			result = append(result, u[i])
+		}
+	}
+	return strings.Join(result, "/")
+}
+
 // 字符串数组去重
 func RemoveDuplicateElement(languages []string) []string {
 	result := make([]string, 0, len(languages))
