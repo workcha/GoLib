@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -68,5 +69,10 @@ func FileExists(path string) bool {
 		return true
 	}
 	return false
+}
 
+//字符串转int
+func Str2Int(text string) int {
+	d, _ := strconv.ParseInt(text, 10, 64)
+	return int(d)
 }

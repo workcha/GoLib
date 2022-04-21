@@ -71,13 +71,13 @@ func (h *Http) HEAD(url string) *HttpResponse {
 }
 
 //判断url是否为文件
-func (h *Http) ISFile(url string) bool {
+func (h *Http) ISFile(url string) (bool, int) {
 	response := h.HEAD(url)
 	headerKeys := h.getHeaderKeys(response.ResponseHeader)
 	if StrInList("ETag", headerKeys, true) && StrInList("Last-Modified", headerKeys, true) {
-		return true
+		return true, Str2Int(strings.Join(response.ResponseHeader["Content-Length"], ""))
 	}
-	return false
+	return false, 0
 }
 
 //下载文件到本地
@@ -243,7 +243,6 @@ func getTitle(response *http.Response) (title string) {
 
 //strng形式获取headers
 func getHeaders(response *http.Response) (header string) {
-
 	for k, v := range response.Header {
 		header = header + k + ": " + strings.Join(v, ";") + "\r\n"
 	}

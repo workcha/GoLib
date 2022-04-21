@@ -8,4 +8,6 @@ func TestGetDomainUrl(t *testing.T) {
 
 	str := RandString(20)
 	println(str)
+
+	println(Str2Int("123"))
 }

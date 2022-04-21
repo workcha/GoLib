@@ -119,7 +119,7 @@ func TestGetClient(t *testing.T) {
 	http.FileUpload("file", "1.png", "http://127.0.0.1/8899.php", "image/png", []byte("I'am content"), map[string]string{"param": "1"})
 
 	//判断是否为静态文件
-	isFile := http.ISFile("http://127.0.0.1/1.txt")
+	isFile, _ := http.ISFile("http://127.0.0.1/1.txt")
 	if isFile {
 		print("isFile")
 		if http.DownloadFile("http://127.0.0.1/1.txt", "1.txt") {
