@@ -2,7 +2,9 @@ package GoLib
 
 import (
 	"bytes"
+	"crypto/md5"
 	"crypto/tls"
+	"encoding/hex"
 	"fmt"
 	"golang.org/x/net/publicsuffix"
 	"golang.org/x/text/encoding/traditionalchinese"
@@ -269,4 +271,14 @@ func getResponsePackage(response *http.Response) (result string) {
 	result = response.Proto + " " + response.Status + "\r\n"
 	result += getHeaders(response) + "\r\n"
 	return
+}
+
+//获取文件md5
+func GetMd5(response *HttpResponse) string {
+	if response.Status == "200" && string(response.ResponseBody) != "" {
+		h := md5.New()
+		h.Write(response.ResponseBody)
+		return hex.EncodeToString(h.Sum(nil))
+	}
+	return " "
 }
