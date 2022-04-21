@@ -14,6 +14,7 @@ import (
 	"net/http/cookiejar"
 	"net/textproto"
 	"net/url"
+	"os"
 	"regexp"
 	"strings"
 	"time"
@@ -33,7 +34,7 @@ type HttpResponse struct {
 	Url             string
 	Status          string
 	ResponseHeader  map[string][]string
-	ResponseBody    string
+	ResponseBody    []byte
 	Title           string
 	RequestPackage  string
 	ResponsePackage string
@@ -79,6 +80,21 @@ func (h *Http) ISFile(url string) bool {
 	return false
 }
 
+//下载文件到本地
+func (h *Http) DownloadFile(url, fileFullPath string) bool {
+	httpresponse := h.GET(url)
+	if httpresponse.BaseResponse != nil {
+		file, _ := os.Create(fileFullPath)
+		file.Write(httpresponse.ResponseBody)
+		defer file.Close()
+		if FileExists(fileFullPath) {
+			return true
+		}
+		return false
+	}
+	return false
+}
+
 //获取header的keys
 func (h *Http) getHeaderKeys(headers map[string][]string) (result []string) {
 	for k := range headers {
@@ -110,7 +126,7 @@ func (h *Http) httpRequest(method, url, body, tp string) *HttpResponse {
 	}
 	response, _ := h.Client.Do(requests)
 	responseBody := getBody(response)
-	return &HttpResponse{BaseResponse: response, Url: response.Request.URL.RequestURI(), Status: response.Status, ResponseHeader: response.Header, ResponseBody: responseBody, Title: getTitle(response), RequestPackage: getRequestPackage(response, body), ResponsePackage: getResponsePackage(response) + responseBody}
+	return &HttpResponse{BaseResponse: response, Url: response.Request.URL.RequestURI(), Status: response.Status, ResponseHeader: response.Header, ResponseBody: responseBody, Title: getTitle(response), RequestPackage: getRequestPackage(response, body), ResponsePackage: getResponsePackage(response) + string(responseBody)}
 }
 
 //文件上传
@@ -157,7 +173,7 @@ func (h *Http) FileUpload(fieldName, fileName, url, contentType string, fileCont
 	requests.Header.Add("Content-Type", contentType2)
 	response, _ := h.Client.Do(requests)
 	responseBody := getBody(response)
-	return &HttpResponse{BaseResponse: response, Url: response.Request.URL.RequestURI(), Status: response.Status, ResponseHeader: response.Header, ResponseBody: responseBody, Title: getTitle(response), RequestPackage: getRequestPackage(response, string(requestBody)), ResponsePackage: getResponsePackage(response) + responseBody}
+	return &HttpResponse{BaseResponse: response, Url: response.Request.URL.RequestURI(), Status: response.Status, ResponseHeader: response.Header, ResponseBody: responseBody, Title: getTitle(response), RequestPackage: getRequestPackage(response, string(requestBody)), ResponsePackage: getResponsePackage(response) + string(responseBody)}
 }
 
 //初始化client
@@ -189,12 +205,12 @@ func createFormFile(fieldname, filename, contentType string, w *multipart.Writer
 }
 
 //获取html-content
-func getBody(response *http.Response) string {
+func getBody(response *http.Response) []byte {
 	all, err := io.ReadAll(response.Body)
 	if err != nil {
-		return ""
+		return nil
 	}
-	return string(all)
+	return all
 }
 
 func trimTitleTags(title string) string {
@@ -208,7 +224,7 @@ func trimTitleTags(title string) string {
 func getTitle(response *http.Response) (title string) {
 	body := getBody(response)
 	var re = regexp.MustCompile(`(?im)<\s*title.*>(.*?)<\s*/\s*title>`)
-	for _, match := range re.FindAllString(body, -1) {
+	for _, match := range re.FindAllString(string(body), -1) {
 		title = html.UnescapeString(trimTitleTags(match))
 		break
 	}

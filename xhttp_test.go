@@ -122,5 +122,9 @@ func TestGetClient(t *testing.T) {
 	isFile := http.ISFile("http://127.0.0.1/1.txt")
 	if isFile {
 		print("isFile")
+		if http.DownloadFile("http://127.0.0.1/1.txt", "1.txt") {
+			println("download success")
+		}
 	}
+
 }

@@ -1,11 +1,24 @@
 package GoLib
 
-import "strings"
+import (
+	"fmt"
+	"math/rand"
+	"os"
+	"strings"
+	"time"
+)
 
+//获取主域名url
 func GetDomainUrl(url string) string {
 	//https://www.baidu.com/index.php?a=1
 	u := strings.Split(url, "/")
 	return u[0] + "://" + u[2] + "/"
+}
+
+//从Url中获取主域名
+func GetDomain(url string) string {
+	//https://www.baidu.com/index.php?a=1
+	return strings.Split(url, "/")[2]
 }
 
 // 字符串数组去重
@@ -33,4 +46,27 @@ func StrInList(str string, strList []string, flag bool) bool {
 		}
 	}
 	return false
+}
+
+//获取随机字符串
+func RandString(length int) string {
+	var strByte = []byte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
+	var strByteLen = len(strByte)
+	bytes := make([]byte, length)
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	for i := 0; i < length; i++ {
+		bytes[i] = strByte[r.Intn(strByteLen)]
+	}
+
+	return fmt.Sprintf("%s", bytes)
+}
+
+//判断文件是否存在
+func FileExists(path string) bool {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true
+	}
+	return false
+
 }
