@@ -8,7 +8,7 @@ import (
 //主要获取备份字典
 
 //获取字典前缀
-func GetBackUpSuffix() []string {
+func getBackUpSuffix() []string {
 	return []string{"gz", "sql", "bak", "log", "old", "tar.gz", "tar.tgz", "rar", "zip", "tar.bz2", "7z", "sql~", "sql.gz", ".tar.7z", "tar.xz", "sql.zip"}
 }
 
@@ -48,9 +48,19 @@ func getDomainPrefix(url string) (result []string) {
 }
 
 //获取字典后缀
-func GetBackUpPrefix(url string) []string {
-	result := []string{"bbs", "web", "www", "forum", "backup", "wwwroot", "upload", "0", "1", "123", "temp", "website", "db", "data", "code", "oa", "sysadmin", "test", "新建文件夹", "database", "user", "shopping"}
-	result = append(result, getYearPrefix(5)...)
-	result = append(result, getDomainPrefix(url)...)
-	return RemoveRepeatedElement(result)
+func getBackUpPrefix(url string) []string {
+	result := []string{"bbs", "web", "www", "forum", "backup", "wwwroot", "upload", "0", "1", "123", "temp", "website", "db", "data", "code", "oa", "sysadmin", "test", "新建文件夹", "database", "user", "shopping", "sql"}
+	return result
+}
+
+//获取备份字典
+func GetBackUpDict(url string) (result []string) {
+	suffix := getBackUpSuffix()
+	prefix := getBackUpPrefix(url)
+	for _, p := range prefix {
+		for _, s := range suffix {
+			result = append(result, p+"."+s)
+		}
+	}
+	return
 }

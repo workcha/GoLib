@@ -14,7 +14,10 @@ import (
 func GetDomainUrl(url string) string {
 	//https://www.baidu.com/index.php?a=1
 	u := strings.Split(url, "/")
-	return u[0] + "://" + u[2] + "/"
+	if len(u) >= 3 {
+		return u[0] + "//" + strings.TrimSpace(u[2]) + "/"
+	}
+	return ""
 }
 
 //从Url中获取主域名
@@ -88,12 +91,6 @@ func FileExists(path string) bool {
 	return false
 }
 
-//字符串转int
-func Str2Int(text string) int {
-	d, _ := strconv.ParseInt(text, 10, 64)
-	return int(d)
-}
-
 //判断是否为ip
 func IsIp(ip string) bool {
 	address := net.ParseIP(ip)
@@ -101,6 +98,12 @@ func IsIp(ip string) bool {
 		return false
 	}
 	return true
+}
+
+//字符串转int
+func Str2Int(text string) int {
+	d, _ := strconv.ParseInt(text, 10, 64)
+	return int(d)
 }
 
 // 整数转字符串

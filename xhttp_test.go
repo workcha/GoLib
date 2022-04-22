@@ -14,7 +14,10 @@ func TestGetClient(t *testing.T) {
 		//"x-requested-with": "XMLHttpRequest",
 	}
 	http := Http{Proxy: "http://127.0.0.1:8080", Header: header, TimeOut: 3}
-
+	resp := http.GET("https://www.baidu.com")
+	println("title:" + resp.Title)
+	println(resp.BaseResponse.StatusCode)
+	//println(string(resp.ResponseBody))
 	/*
 		GET /8899.php HTTP/1.1
 		Host: 127.0.0.1
@@ -119,12 +122,12 @@ func TestGetClient(t *testing.T) {
 	http.FileUpload("file", "1.png", "http://127.0.0.1/8899.php", "image/png", []byte("I'am content"), map[string]string{"param": "1"})
 
 	//判断是否为静态文件
-	isFile, _ := http.ISFile("http://127.0.0.1/1.txt")
-	if isFile {
-		print("isFile")
-		if http.DownloadFile("http://127.0.0.1/1.txt", "1.txt") {
-			println("download success")
-		}
-	}
+	//isFile, _ := http.ISFile("http://127.0.0.1/1.txt")
+	//if isFile {
+	//	print("isFile")
+	//	if http.DownloadFile("http://127.0.0.1/1.txt", "1.txt") {
+	//		println("download success")
+	//	}
+	//}
 
 }

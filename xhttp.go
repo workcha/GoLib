@@ -75,9 +75,11 @@ func (h *Http) HEAD(url string) *HttpResponse {
 //判断url是否为文件
 func (h *Http) ISFile(url string) (bool, int) {
 	response := h.HEAD(url)
-	headerKeys := h.getHeaderKeys(response.ResponseHeader)
-	if StrInList("ETag", headerKeys, true) && StrInList("Last-Modified", headerKeys, true) {
-		return true, Str2Int(strings.Join(response.ResponseHeader["Content-Length"], ""))
+	if response != nil {
+		headerKeys := h.getHeaderKeys(response.ResponseHeader)
+		if StrInList("ETag", headerKeys, true) && StrInList("Last-Modified", headerKeys, true) {
+			return true, Str2Int(strings.Join(response.ResponseHeader["Content-Length"], ""))
+		}
 	}
 	return false, 0
 }
@@ -113,6 +115,9 @@ func (h *Http) httpRequest(method, url, body, tp string) *HttpResponse {
 	I := bytes.NewReader([]byte(body))
 	O := transform.NewReader(I, traditionalchinese.Big5.NewEncoder())
 	requests, _ := http.NewRequest(method, url, O)
+	if requests == nil {
+		return nil
+	}
 	for k, v := range h.Header {
 		requests.Header.Add(k, v)
 	}
@@ -126,9 +131,12 @@ func (h *Http) httpRequest(method, url, body, tp string) *HttpResponse {
 		//普通格式传输
 		requests.Header.Add("Content-Type", "application/x- www-form-urlencoded")
 	}
-	response, _ := h.Client.Do(requests)
+	response, err := h.Client.Do(requests)
+	if err != nil {
+		return nil
+	}
 	responseBody := getBody(response)
-	return &HttpResponse{BaseResponse: response, Url: response.Request.URL.RequestURI(), Status: response.Status, ResponseHeader: response.Header, ResponseBody: responseBody, Title: getTitle(response), RequestPackage: getRequestPackage(response, body), ResponsePackage: getResponsePackage(response) + string(responseBody)}
+	return &HttpResponse{BaseResponse: response, Url: response.Request.URL.RequestURI(), Status: response.Status, ResponseHeader: response.Header, ResponseBody: responseBody, Title: getTitle(response, string(responseBody)), RequestPackage: getRequestPackage(response, body), ResponsePackage: getResponsePackage(response) + string(responseBody)}
 }
 
 //文件上传
@@ -175,7 +183,7 @@ func (h *Http) FileUpload(fieldName, fileName, url, contentType string, fileCont
 	requests.Header.Add("Content-Type", contentType2)
 	response, _ := h.Client.Do(requests)
 	responseBody := getBody(response)
-	return &HttpResponse{BaseResponse: response, Url: response.Request.URL.RequestURI(), Status: response.Status, ResponseHeader: response.Header, ResponseBody: responseBody, Title: getTitle(response), RequestPackage: getRequestPackage(response, string(requestBody)), ResponsePackage: getResponsePackage(response) + string(responseBody)}
+	return &HttpResponse{BaseResponse: response, Url: response.Request.URL.RequestURI(), Status: response.Status, ResponseHeader: response.Header, ResponseBody: responseBody, Title: getTitle(response, string(responseBody)), RequestPackage: getRequestPackage(response, string(requestBody)), ResponsePackage: getResponsePackage(response) + string(responseBody)}
 }
 
 //初始化client
@@ -208,7 +216,8 @@ func createFormFile(fieldname, filename, contentType string, w *multipart.Writer
 
 //获取html-content
 func getBody(response *http.Response) []byte {
-	all, err := io.ReadAll(response.Body)
+	//默认 3MB 可以改成你自己想要的
+	all, err := io.ReadAll(io.LimitReader(response.Body, int64(4<<20)))
 	if err != nil {
 		return nil
 	}
@@ -223,8 +232,7 @@ func trimTitleTags(title string) string {
 }
 
 //获取title
-func getTitle(response *http.Response) (title string) {
-	body := getBody(response)
+func getTitle(response *http.Response, body string) (title string) {
 	var re = regexp.MustCompile(`(?im)<\s*title.*>(.*?)<\s*/\s*title>`)
 	for _, match := range re.FindAllString(string(body), -1) {
 		title = html.UnescapeString(trimTitleTags(match))
@@ -240,7 +248,7 @@ func getTitle(response *http.Response) (title string) {
 			return string(titleUtf8)
 		}
 	}
-	return ""
+	return
 }
 
 //strng形式获取headers
@@ -275,10 +283,10 @@ func getResponsePackage(response *http.Response) (result string) {
 
 //获取文件md5
 func GetMd5(response *HttpResponse) string {
-	if response.Status == "200" && string(response.ResponseBody) != "" {
+	if response.BaseResponse.StatusCode == 200 && string(response.ResponseBody) != "" {
 		h := md5.New()
 		h.Write(response.ResponseBody)
 		return hex.EncodeToString(h.Sum(nil))
 	}
-	return " "
+	return ""
 }
