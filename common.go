@@ -3,6 +3,7 @@ package GoLib
 import (
 	"fmt"
 	"math/rand"
+	"net"
 	"os"
 	"strconv"
 	"strings"
@@ -91,4 +92,18 @@ func FileExists(path string) bool {
 func Str2Int(text string) int {
 	d, _ := strconv.ParseInt(text, 10, 64)
 	return int(d)
+}
+
+//判断是否为ip
+func IsIp(ip string) bool {
+	address := net.ParseIP(ip)
+	if address == nil {
+		return false
+	}
+	return true
+}
+
+// 整数转字符串
+func Int2Str(num int) string {
+	return fmt.Sprintf("%d", num)
 }
