@@ -29,7 +29,7 @@ func RemoveRepeatedElement(arr []string) (newArr []string) {
 				break
 			}
 		}
-		if !repeat {
+		if !repeat && arr[i] != "" {
 			newArr = append(newArr, arr[i])
 		}
 	}
@@ -62,16 +62,19 @@ func GetAllLinks(content string) CollectLinksResult {
 	for _, b := range aLinks {
 		links = append(links, b.Attrs()["href"])
 	}
+	aLinks = nil
 	//script src
 	jsLinks := doc.FindAll("script")
 	for _, b := range jsLinks {
 		js = append(js, b.Attrs()["src"])
 	}
+	jsLinks = nil
 	//link href
 	Links := doc.FindAll("link")
 	for _, b := range Links {
 		css = append(css, b.Attrs()["href"])
 	}
+	Links = nil
 	return CollectLinksResult{Links: dealLinks(links), Js: dealLinks(js), Css: dealLinks(css)}
 
 }
@@ -128,7 +131,6 @@ func All(httpBody io.Reader) CollectLinksResult {
 				}
 			}
 		}
-
 	}
 }
 

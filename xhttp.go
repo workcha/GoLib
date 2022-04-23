@@ -132,6 +132,11 @@ func (h *Http) httpRequest(method, url, body, tp string) *HttpResponse {
 		requests.Header.Add("Content-Type", "application/x- www-form-urlencoded")
 	}
 	response, err := h.Client.Do(requests)
+	//手动清理前面的变量
+	requests = nil
+	I = nil
+	O = nil
+
 	if err != nil {
 		return nil
 	}
@@ -182,6 +187,13 @@ func (h *Http) FileUpload(fieldName, fileName, url, contentType string, fileCont
 	}
 	requests.Header.Add("Content-Type", contentType2)
 	response, _ := h.Client.Do(requests)
+	//手动清理前面不使用变量
+	body = nil
+	requests = nil
+	contentType2 = ""
+	file = nil
+	mulWriter = nil
+
 	responseBody := getBody(response)
 	return &HttpResponse{BaseResponse: response, Url: response.Request.URL.RequestURI(), Status: response.Status, ResponseHeader: response.Header, ResponseBody: responseBody, Title: getTitle(response, string(responseBody)), RequestPackage: getRequestPackage(response, string(requestBody)), ResponsePackage: getResponsePackage(response) + string(responseBody)}
 }
@@ -216,6 +228,7 @@ func createFormFile(fieldname, filename, contentType string, w *multipart.Writer
 
 //获取html-content
 func getBody(response *http.Response) []byte {
+	defer response.Body.Close()
 	//默认 3MB 可以改成你自己想要的
 	all, err := io.ReadAll(io.LimitReader(response.Body, int64(4<<20)))
 	if err != nil {
@@ -248,6 +261,7 @@ func getTitle(response *http.Response, body string) (title string) {
 			return string(titleUtf8)
 		}
 	}
+	re = nil
 	return
 }
 
@@ -271,6 +285,7 @@ func getRequestPackage(response *http.Response, body string) (result string) {
 	if body != "" {
 		result += "\r\n" + body
 	}
+	request = nil
 	return result
 }
 

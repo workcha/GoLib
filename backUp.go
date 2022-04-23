@@ -9,7 +9,7 @@ import (
 
 //获取字典前缀
 func getBackUpSuffix() []string {
-	return []string{"gz", "sql", "bak", "log", "old", "tar.gz", "tar.tgz", "rar", "zip", "tar.bz2", "7z", "sql~", "sql.gz", ".tar.7z", "tar.xz", "sql.zip"}
+	return []string{"gz", "sql", "bak", "log", "old", "tar.gz", "tar.tgz", "rar", "zip", "tar.bz2", "7z", "sql~", "sql.gz", "tar.7z", "tar.xz", "sql.zip"}
 }
 
 //年份的备份，一般都是5
@@ -18,6 +18,7 @@ func getYearPrefix(num int) (result []string) {
 	for i := 0; i <= num; i++ {
 		result = append(result, Int2Str(year-i))
 	}
+	year = 0
 	return
 }
 
@@ -44,6 +45,7 @@ func getDomainPrefix(url string) (result []string) {
 	} else {
 		result = append(result, domain)
 	}
+	domain = ""
 	return
 }
 
@@ -62,5 +64,7 @@ func GetBackUpDict(url string) (result []string) {
 			result = append(result, p+"."+s)
 		}
 	}
+	suffix = nil
+	prefix = nil
 	return
 }

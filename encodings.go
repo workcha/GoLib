@@ -15,6 +15,8 @@ func Decodegbk(s []byte) ([]byte, error) {
 	I := bytes.NewReader(s)
 	O := transform.NewReader(I, simplifiedchinese.GBK.NewDecoder())
 	d, e := ioutil.ReadAll(O)
+	I = nil
+	O = nil
 	if e != nil {
 		return nil, e
 	}
@@ -26,6 +28,8 @@ func Decodebig5(s []byte) ([]byte, error) {
 	I := bytes.NewReader(s)
 	O := transform.NewReader(I, traditionalchinese.Big5.NewDecoder())
 	d, e := ioutil.ReadAll(O)
+	I = nil
+	O = nil
 	if e != nil {
 		return nil, e
 	}
@@ -37,6 +41,8 @@ func Encodebig5(s []byte) ([]byte, error) {
 	I := bytes.NewReader(s)
 	O := transform.NewReader(I, traditionalchinese.Big5.NewEncoder())
 	d, e := ioutil.ReadAll(O)
+	I = nil
+	O = nil
 	if e != nil {
 		return nil, e
 	}
