@@ -1,7 +1,9 @@
 package GoLib
 
 import (
+	"bufio"
 	"fmt"
+	"io"
 	"math/rand"
 	"net"
 	"os"
@@ -109,4 +111,47 @@ func Str2Int(text string) int {
 // 整数转字符串
 func Int2Str(num int) string {
 	return fmt.Sprintf("%d", num)
+}
+
+//登陆页识别
+func LoginPageCheck(text string) bool {
+	if !strings.Contains(text, "<form") {
+		return false
+	}
+	login_keyword_list := []string{"用户名", "密码", "login", "denglu", "登陆", "登录", "user", "pass", "yonghu", "mima", "admin"}
+	sous := []string{"检索", "搜", "search", "查找", "keyword", "关键字"}
+	for _, v := range login_keyword_list {
+
+		if strings.Contains(text, v) {
+			for _, v2 := range sous {
+				if strings.Contains(text, v2) {
+					return false
+				}
+			}
+			return true
+		}
+	}
+	return false
+}
+
+//文件逐行读取
+func ReadLine(fileName string) []string {
+	f, err := os.Open(fileName)
+	if err != nil {
+		return nil
+	}
+	buf := bufio.NewReader(f)
+	var result []string
+	for {
+		line, err := buf.ReadString('\n')
+		line = strings.TrimSpace(line)
+		if err != nil {
+			if err == io.EOF { //读取结束，会报EOF
+				return result
+			}
+			return nil
+		}
+		result = append(result, line)
+	}
+	return result
 }
